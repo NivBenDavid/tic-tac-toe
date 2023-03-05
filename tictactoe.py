@@ -1,4 +1,5 @@
 import copy
+import random
 
 BOARD_HEIGHT = 3
 BOARD_WIDTH = 3  # Define board height and width.
@@ -105,14 +106,14 @@ def get_player():
     while True:
         player = input("What would you like to play as? (O/X): ").upper()
         if player == 'X':
+            print()
             print("PLAYER 1   |   PLAYER 2")
             print("   X       |      O\n")
-            player2 = 'O'
             break
         elif player == 'O':
+            print()
             print("PLAYER 1   |   PLAYER 2")
             print("   O       |      X\n")
-            player2 = 'X'
             break
         else:
             print('Please select O/X!')
@@ -149,38 +150,115 @@ def get_winner(board):
 def is_draw(board):
     for row in board:
         if None in row:
-            return False
+            return False  # If there is an empty square on the board - no draw.
     return True
 
 
-# To start a game        ----------------------
-# get_player() = Asks the player to be either X or O, stores choice in 'playing'
-# previous_board = new_board() - CREATE A NEW BOARD
+def easy_bot():
+    while True:
+        x = random.randint(0, BOARD_HEIGHT-1)
+        y = random.randint(0, BOARD_WIDTH-1)  # Picks a random number between 0 and BOARD HEIGHT,WIDTH
+        valid_move = check_move(x, y)  # Checks if move is valid using check_move() function
+        if not valid_move:
+            break
+        continue  # If the move is not valid, the computer will pick X,Y until it is valid.
+    return (x, y)
 
-# ORDER OF FUNCTIONS LOOP ---------------------
-# move_coords = get_move() - GET MOVE FOR PLAYER
-# board = make_move(previous_board, move_coords, player) - MAKE THE MOVE FOR PLAYER PLAYING
-# update_board() = UPDATE CURRENT BOARD WITH NEW MOVE
-# render(board) = RENDER THE CURRENT BOARD TO CONSOLE
-# get_winner() = checks if the board has a winner.
-# If there is a winner, game over, otherwise, switch_turn() switches between turns
-# and the order of function is started over.
-# ---------------------------------------------
+
+def mode_selection():  # Has the player select the mode they want to play in
+    try:
+        while True:
+            mode = input('Choose a mode (EASY/HARD/CO-OP): ')
+            if mode.lower() == 'easy':
+                return 0
+            elif mode.lower() == 'hard':
+                return 0  # Failed to implement AI
+            elif mode.lower() == 'coop' or mode.lower() == 'co-op':
+                return 2
+            else:
+                print("Invalid mode!\n")
+    except Exception:
+        print("Invalid mode!\n")
+
+
+
+# GAME LOOP
 
 
 playing = get_player()
+mode = mode_selection()
 previous_board = new_board()
-render(previous_board)
-while True:
-    move_coords = get_move(playing)
-    board = make_move(previous_board, move_coords, playing)
-    update_board()
-    render(board)
-    if get_winner(board):
-        print(f'WINNER IS {playing}!!!')
-        break
-    print(board)
-    if is_draw(board):
-        print("IT'S A DRAW!!!")
-        break
-    playing = switch_turn(playing)
+if mode == 0:
+    starting = random.randint(0, 1)
+    if starting == 0:
+        render(previous_board)
+        print("You start!")
+        while True:
+            move_coords = get_move(playing)
+            board = make_move(previous_board, move_coords, playing)
+            update_board()
+            if get_winner(board):
+                render(board)
+                print(f'WINNER IS {playing}!!!')
+                break
+            if is_draw(board):
+                print("IT'S A DRAW!!!")
+                break
+            playing = switch_turn(playing)
+            move_coords = easy_bot()
+            print("BOT PLAYED -", '   X |',move_coords[0],'    Y|',move_coords[1])
+            board = make_move(previous_board, move_coords, playing)
+            update_board()
+            render(board)
+            if get_winner(board):
+                print(f'WINNER IS {playing}!!!')
+                break
+            if is_draw(board):
+                print("IT'S A DRAW!!!")
+                break
+            playing = switch_turn(playing)
+            # PLAYER STARTS MOVE ORDER
+
+
+    else:
+        print("Computer starts!")
+        while True:
+            move_coords = easy_bot()
+            print("BOT PLAYED -", '   X |', move_coords[0], '    Y|', move_coords[1])
+            board = make_move(previous_board, move_coords, playing)
+            update_board()
+            render(board)
+            if get_winner(board):
+                print(f'WINNER IS {playing}!!!')
+                break
+            if is_draw(board):
+                print("IT'S A DRAW!!!")
+                break
+            playing = switch_turn(playing)
+            move_coords = get_move(playing)
+            board = make_move(previous_board, move_coords, playing)
+            update_board()
+            if get_winner(board):
+                print(f'WINNER IS {playing}!!!')
+                break
+            if is_draw(board):
+                print("IT'S A DRAW!!!")
+                break
+            playing = switch_turn(playing)
+            # COMPUTER STARTS MOVE ORDER
+
+
+if mode == 2:
+    render(previous_board)
+    while True:
+        move_coords = get_move(playing)
+        board = make_move(previous_board, move_coords, playing)
+        update_board()
+        render(board)
+        if get_winner(board):
+            print(f'WINNER IS {playing}!!!')
+            break
+        if is_draw(board):
+            print("IT'S A DRAW!!!")
+            break
+        playing = switch_turn(playing)
