@@ -1,5 +1,9 @@
 # tic-tac-toe
 
+- Added basic computer player that plays random moves.
+
+After doing further research on AI implementation I've discovered that the way I formatted my code would not be best suitable to add the minimax algorithm(AI I wanted to use), I will work on better usage of super functions, classes, and self methods.
+
 
 A simple game of Tic Tac Toe coded in Python, coded after ~1 week of experience.
 To play the game, run the code, you will be prompted to select O/X -
